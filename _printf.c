@@ -1,46 +1,51 @@
-#include "main.h"
-#include <unistd.h>
-
-static int put_char(char c) {
-    return write(1, &c, 1);
-}
+#include <stdarg.h>
+#include <stdio.h>
 
 int _printf(const char *format, ...) {
     va_list args;
+    int count = 0;
+    int i, j;
     va_start(args, format);
 
-    int char_count = 0;
-    
-    for (const char *ptr = format; *ptr != '\0'; ptr++) {
-        if (*ptr != '%') {
-            char_count += put_char(*ptr);
+    for (i = 0; format[i] != '\0'; i++) {
+        if (format[i] != '%') {
+            putchar(format[i]);
+            count++;
             continue;
         }
 
-        char specifier = *++ptr;
-        switch (specifier) {
+        i++;
+
+        switch (format[i]) {
             case 'c': {
                 char c = (char)va_arg(args, int);
-                char_count += put_char(c);
+                putchar(c);
+                count++;
                 break;
             }
             case 's': {
-                const char *str = va_arg(args, const char *);
-                for (; *str != '\0'; str++)
-                    char_count += put_char(*str);
+                char *s = va_arg(args, char *);
+                for (j = 0; s[j] != '\0'; j++) {
+                    putchar(s[j]);
+                    count++;
+                }
                 break;
             }
-            case '%':
-                char_count += put_char('%');
+            case '%': {
+                putchar('%');
+                count++;
                 break;
-            default:
-                char_count += put_char('%');
-                char_count += put_char(specifier);
+            }
+            default: {
+                /* For any other character after '%', print both '%' and that character. */
+                putchar('%');
+                putchar(format[i]);
+                count += 2;
                 break;
+            }
         }
     }
 
     va_end(args);
-
-    return char_count;
+    return count;
 }
