@@ -1,0 +1,85 @@
+#include <stdarg.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include "main.h" // make sure you define _putchar in your header file
+
+/**
+ * _printf - Our version of the classic printf function
+ * @format: The format string
+ * ...: Additional arguments
+ * 
+ * Return: The number of characters printed
+ */
+
+int _printf(const char *format, ...)
+{
+    va_list args;
+    int count = 0;
+    
+    if (format == NULL)
+        return (-1);
+
+    va_start(args, format);
+
+    for (; *format != '\0'; format++)
+    {
+        if (*format == '%')
+        {
+            format++;
+            switch (*format)
+            {
+                case 'c':
+                    count += _putchar(va_arg(args, int));
+                    break;
+                case 's':
+                    count += print_str(va_arg(args, char *));
+                    break;
+                // TODO: Add case for every type you want to support (integer, float, etc.)
+            }
+        }
+        else
+        {
+            _putchar(*format);
+            count++;
+        }
+    }
+    
+    va_end(args);
+
+    return (count);
+}
+
+/**
+ * _putchar - writes the character c to stdout
+ * @c: The character to print
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _putchar(char c)
+{
+    return (write(1, &c, 1));
+}
+
+/**
+ * print_str - print a string
+ * @str: The string to print
+ *
+ * Return: The length of the string
+ */
+int print_str(char *str)
+{
+    int len = 0;
+
+    if (str == NULL)
+        str = "(null)";
+
+    while (*str)
+    {
+        _putchar(*str);
+        str++;
+        len++;
+    }
+
+    return (len);
+}
