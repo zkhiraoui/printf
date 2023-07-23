@@ -1,96 +1,51 @@
 #include <stdarg.h>
+#include <stdlib.h>
 #include <unistd.h>
 
-int _itoa_write(int value, int count);
-void _bin_write(unsigned int n);
+int _putchar(char c) {
+    return write(1, &c, 1);
+}
 
 int _printf(const char *format, ...) {
-    va_list args;
     int count = 0;
-    char ch;
-    char *str;
-    int int_val;
-    unsigned int bin_val;
-
+    va_list args;
     va_start(args, format);
-    while (*format) {
-        if (*format == '%') {
-            format++;
-            switch (*format) {
-                case 'c':
-                    ch = (char) va_arg(args, int);
-                    write(1, &ch, 1);
-                    count++;
-                    break;
-                case 's':
-                    str = va_arg(args, char *);
-                    while(*str) {
-                        write(1, str, 1);
-                        str++;
-                        count++;
-                    }
-                    break;
-                case '%':
-                    write(1, format, 1);
-                    count++;
-                    break;
-                case 'd':
-                case 'i':
-                    int_val = va_arg(args, int);
-                    count += _itoa_write(int_val, 0);
-                    break;
-                case 'b':
-                    bin_val = va_arg(args, unsigned int);
-                    _bin_write(bin_val);
-                    while(bin_val != 0) {
-                        bin_val /= 2;
-                        count++;
-                    }
-                    break;
-				case 'u':
-    unsigned int ui_val = va_arg(args, unsigned int);
-    count += _uitoa_write(ui_val, 0);
-    break;
-            }
-        } else {
-            write(1, format, 1);
+
+    for (int i = 0; format[i]; i++) {
+        if (format[i] != '%') {
+            _putchar(format[i]);
             count++;
         }
-        format++;
+        else {
+            i++; // increment to character after '%'
+            switch (format[i]) {
+                case 'c': { 
+                    char c = va_arg(args, int); // char arguments are promoted to int in ...
+                    _putchar(c);
+                    count++;
+                    break;
+                }
+                case 's': {
+                    char *str = va_arg(args, char *);
+                    for (int j = 0; str[j]; j++) {
+                        _putchar(str[j]);
+                        count++;
+                    }
+                    break;
+                }
+                case '%':
+                    _putchar('%');
+                    count++;
+                    break;
+                default:
+                    // for any unrecognized pattern
+                    _putchar('%');
+                    _putchar(format[i]);
+                    count += 2;
+            }
+        }
     }
-    va_end(args);
 
+    va_end(args); // cleanup
     return count;
-}
-
-int _itoa_write(int value, int count) {
-    if (value == 0 && count == 0)
-        return write(1, "0", 1);
-    if (value < 0) {
-        write(1, "-", 1);
-        return 1 + _itoa_write(-value, count + 1);
-    }
-    if (value / 10)
-        count = _itoa_write(value / 10, count + 1);
-    char ch = value % 10 + '0';
-    write(1, &ch, 1);
-    return count + 1;
-}
-
-void _bin_write(unsigned int n) {
-    if (n == 0)
-        return;
-    _bin_write(n / 2);
-    char ch = n % 2 + '0';
-    write(1, &ch, 1);
-}
-
-int _uitoa_write(unsigned int value, int count) {
-    if (value == 0 && count == 0)
-        return write(1, "0", 1);
-    if (value / 10)
-        count = _uitoa_write(value / 10, count + 1);
-    char ch = value % 10 + '0';
-    write(1, &ch, 1);
-    return count + 1;
 }
