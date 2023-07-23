@@ -27,12 +27,7 @@ void print_unsigned_number(unsigned int n) {
 }
 
 void print_hex(unsigned int n, int capital) {
-    char* hex;
-    if (capital) {
-        hex = "0123456789ABCDEF";
-    } else {
-        hex = "0123456789abcdef";
-    }
+    char hex[17] = capital ? "0123456789ABCDEF" : "0123456789abcdef";
 
     if (n / 16)
         print_hex(n / 16, capital);
@@ -49,28 +44,26 @@ void print_pointer(void *p) {
 
 int _printf(const char *format, ...) {
     int count = 0;
-    int i;
-    int j;
     va_list args;
     va_start(args, format);
 
-    for (i = 0; format[i]; i++) {
+    for (int i = 0; format[i]; i++) {
         if (format[i] != '%') {
             _putchar(format[i]);
             count++;
         }
         else {
-            i++; /* increment to character after '%' */
+            i++; // increment to character after '%'
             switch (format[i]) {
                 case 'c': { 
-                    char c = va_arg(args, int); /* char arguments are promoted to int in ... */
+                    char c = va_arg(args, int); // char arguments are promoted to int in ...
                     _putchar(c);
                     count++;
                     break;
                 }
                 case 's': {
                     char *str = va_arg(args, char *);
-                    for (j = 0; str[j]; j++) {
+                    for (int j = 0; str[j]; j++) {
                         _putchar(str[j]);
                         count++;
                     }
@@ -94,17 +87,17 @@ int _printf(const char *format, ...) {
                 case 'o': {
                     unsigned int n = va_arg(args, unsigned int);
                     _putchar('0');
-                    print_hex(n, 8); /* print in octal */
+                    print_hex(n, 8); // print in octal
                     break;
                 }
                 case 'x': {
                     unsigned int n = va_arg(args, unsigned int);
-                    print_hex(n, 0); /* print in lowercase hexadecimal */
+                    print_hex(n, 0); // print in lowercase hexadecimal
                     break;
                 }
                 case 'X': {
                     unsigned int n = va_arg(args, unsigned int);
-                    print_hex(n, 1); /* print in uppercase hexadecimal */
+                    print_hex(n, 1); // print in uppercase hexadecimal
                     break;
                 }
                 case 'p': {
@@ -113,7 +106,7 @@ int _printf(const char *format, ...) {
                     break;
                 }
                 default:
-                    /* for any unrecognized pattern */
+                    // for any unrecognized pattern
                     _putchar('%');
                     _putchar(format[i]);
                     count += 2;
@@ -121,6 +114,7 @@ int _printf(const char *format, ...) {
         }
     }
 
-    va_end(args); /* cleanup */
+    va_end(args); // cleanup
     return count;
 }
+
