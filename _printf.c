@@ -54,36 +54,3 @@ void print_string(va_list args)
     }
 }
 
-void print_percent(void)
-{
-    char c = '%';
-    write(1, &c, 1);
-}
-
-
-void print_percent(va_list args) {
-    (void)args;
-    write(1, "%", 1);
-}
-
-int _printf(const char *format, ...) {
-    va_list args;
-    va_start(args, format);
-    
-    while (*format) {
-        if (*format == '%') {
-            format++;
-            switch (*format) {
-                case 'c': print_char(args); break;
-                case 's': print_string(args); break;
-                case '%': print_percent(args); break;
-            }
-        } else {
-            write(1, format, 1);
-        }
-        format++;
-    }
-    
-    va_end(args);
-    return 0; // this should be the count of printed characters, fix as needed
-}
