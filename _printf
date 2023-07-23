@@ -83,3 +83,82 @@ int print_str(char *str)
 
     return (len);
 }
+
+
+int _printf(const char *format, ...)
+{
+    unsigned int i = 0, count = 0;
+    va_list args;
+    va_start(args, format);
+
+    while (format[i])
+    {
+        if (format[i] != '%')
+        {
+            _putchar(format[i]);
+            count++;
+        }
+        else
+        {
+            i++;
+            switch (format[i])
+            {
+                case 'c':
+                    _putchar(va_arg(args, int));
+                    count++;
+                    break;
+                case 's':
+                {
+                    char *str = va_arg(args, char *);
+                    while (*str)
+                    {
+                        _putchar(*str);
+                        str++;
+                        count++;
+                    }
+                    break;
+                }
+                case 'd':
+                case 'i':
+                {
+                    int n = va_arg(args, int);
+                    print_integer(n);
+                    if (n < 0) 
+                    {
+                        n = -n;
+                        count++;
+                    }
+                    while (n > 0) 
+                    {
+                        n /= 10;
+                        count++;
+                    }
+                    break;
+                }
+                case '%':
+                    _putchar('%');
+                    count++;
+                    break;
+            }
+        }
+        i++;
+    }
+
+    va_end(args);
+    return count;
+}
+
+
+void print_integer(int n)
+{
+    if (n < 0)
+    {
+        _putchar('-');
+        n = -n;
+    }
+
+    if (n / 10)
+        print_integer(n / 10);
+
+    _putchar((n % 10) + '0');
+}
